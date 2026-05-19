@@ -39,8 +39,8 @@
   }
 
   body.dark-mode {
-    --ink: #FFFFFF;
-    --ink-2: #D4C4ED;
+    --ink: #F2E9FD;
+    --ink-2: #c4a9e3;
     --bg-color-1: #1a0b2e;
     --bg-color-2: #0f0518;
     --cream: #1C1132;
@@ -49,9 +49,9 @@
     --moon-bg: #1e293b;
     --moon-fg: #e2e8f0;
     
-    --card-bg: rgba(20, 10, 35, 0.95);
-    --surface-bg: #1c1132;
-    --surface-hover: #2d1b4e;
+    --card-bg: rgba(28, 17, 50, 0.85);
+    --surface-bg: #2a1a4a;
+    --surface-hover: #3d266b;
     --star-color: #ffffff;
   }
 
@@ -183,7 +183,6 @@
   .tarot-footer { margin-top: 32px; padding-top: 32px; border-top: 1px solid rgba(255, 215, 0, 0.2); }
   .lucky-number-label { font-size: 15px; color: #E8D5FA; margin-bottom: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; }
   .lucky-number-display { display: inline-flex; align-items: center; justify-content: center; gap: 16px; background: linear-gradient(135deg, #FFD700, #FFB347); color: #1C1132; padding: 12px 32px; border-radius: 16px; font-size: 42px; font-weight: 800; font-family: "Plus Jakarta Sans", sans-serif; box-shadow: 0 12px 24px rgba(255, 215, 0, 0.25); }
-  .lucky-emoji { font-size: 32px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); }
   .tarot-watermark { font-size: 11px; color: rgba(255,255,255,0.4); letter-spacing: 0.15em; margin-top: 24px; text-transform: uppercase; font-weight: 600; }
 
   .soulmate-box { margin-top: 24px; padding: 16px; background: rgba(255, 215, 0, 0.1); border: 1px dashed rgba(255, 215, 0, 0.5); border-radius: 12px; color: #FFD700; font-size: 14px; font-weight: 600; letter-spacing: 0.05em; text-align: center; }
@@ -270,19 +269,18 @@
   // รายชื่อผู้จัดการ 5 ท่าน (เพื่อ Bypass ค่ายกล)
   const MKT_MANAGERS = ["วรพล", "นริศรา", "ศุภฤกษ์", "ธนภูมิ", "ถาวร"];
   
-  // แบ่งผู้เล่นออกเป็น 5 กลุ่ม ตาม Sheet 3 ล่าสุด 100%
+  // จัดกลุ่มตาม Sheet ล่าสุดเป๊ะ 100% (อ้างอิงจากไฟล์ Engagement Plan 2026 MKT&CRC(อัญมณี).csv)
   const PLAYER_DATA = {
-    // กลุ่ม 1 - 🔴 ทับทิมไฟ
+    // กลุ่ม 1 - 🔴 ทับทิมไฟ (8 คน)
     "นริศรา": { group: 1, dept: "sun" },
     "จิตรติมา": { group: 1, dept: "sun" },
     "โชคกร": { group: 1, dept: "sun" },
     "อริสรา": { group: 1, dept: "sun" },
     "ปาริฉัตร": { group: 1, dept: "sun" },
-    "สุเชาว์": { group: 1, dept: "sun" },
     "ชรัญญา": { group: 1, dept: "moon" },
     "นฤมล": { group: 1, dept: "moon" },
 
-    // กลุ่ม 2 - 🔵 ไพลินวารี
+    // กลุ่ม 2 - 🔵 ไพลินวารี (8 คน)
     "ถาวร": { group: 2, dept: "sun" },
     "ชัยรัฐพล": { group: 2, dept: "sun" },
     "รัตน์ชณัฏฐ์": { group: 2, dept: "sun" },
@@ -290,39 +288,42 @@
     "สุทธภา": { group: 2, dept: "moon" },
     "พริมาห์": { group: 2, dept: "moon" },
     "จิรัชยา": { group: 2, dept: "moon" },
-    "ชวัลนุช": { group: 2, dept: "moon" },
 
-    // กลุ่ม 3 - 🟢 มรกตพฤกษา
+    // กลุ่ม 3 - 🟢 มรกตพฤกษา (8 คน)
     "วรพล": { group: 3, dept: "sun" },
     "ชัชเขตต์": { group: 3, dept: "sun" },
     "ปิ่นปินัทธ์": { group: 3, dept: "sun" },
     "นพดล": { group: 3, dept: "sun" },
     "รัชพล": { group: 3, dept: "sun" },
-    "วิชญะ": { group: 3, dept: "sun" },
     "เชษฐา": { group: 3, dept: "moon" },
     "รวินท์": { group: 3, dept: "moon" },
-    "รวินันท์": { group: 3, dept: "moon" },
 
-    // กลุ่ม 4 - 🟡 บุษราคัมแสง
+    // กลุ่ม 4 - 🟡 บุษราคัมแสง (9 คน)
     "ศุภฤกษ์": { group: 4, dept: "sun" },
-    "นานารัตน์": { group: 4, dept: "sun" },
-    "รมันยา": { group: 4, dept: "sun" },
+    "ภาริณ": { group: 4, dept: "sun" },
     "ภูษณ": { group: 4, dept: "sun" },
+    "พรทิพย์": { group: 4, dept: "sun" },
     "มณธิชา": { group: 4, dept: "moon" },
     "วฤชา": { group: 4, dept: "moon" },
-    "พีรญา": { group: 4, dept: "moon" },
     "ชัญญานุช": { group: 4, dept: "moon" },
-    "กัลยานิษฐ์": { group: 4, dept: "moon" },
 
-    // กลุ่ม 5 - 🟣 อเมทิสต์มายา
+    // กลุ่ม 5 - 🟣 อเมทิสต์มายา (9 คน)
     "ธนภูมิ": { group: 5, dept: "sun" },
-    "ภาริณ": { group: 5, dept: "sun" },
-    "พรทิพย์": { group: 5, dept: "sun" },
-    "อัมรา": { group: 5, dept: "sun" },
-    "สิริญา": { group: 5, dept: "moon" },
+    "นานารัตน์": { group: 5, dept: "sun" },
+    "รมันยา": { group: 5, dept: "sun" },
+    "พีรญา": { group: 5, dept: "moon" },
     "อุไรรัตน์": { group: 5, dept: "moon" },
-    "รัตติกาล": { group: 5, dept: "moon" },
-    "สรัญญา": { group: 5, dept: "moon" }
+    "สิริญา": { group: 5, dept: "moon" },
+    "รวินันท์": { group: 5, dept: "moon" },
+
+    // ✨ ทีมงาน (กระจายลงในกลุ่ม 1-5 ตามการบาลานซ์ล่าสุด)
+    "ชวัลนุช": { group: 1, dept: "moon" },
+    "สุเชาว์": { group: 2, dept: "sun" },
+    "กัลยานิษฐ์": { group: 3, dept: "moon" },
+    "อัมรา": { group: 4, dept: "sun" },
+    "รัตติกาล": { group: 4, dept: "moon" }, 
+    "วิชญะ": { group: 5, dept: "sun" },
+    "สรัญญา": { group: 5, dept: "moon" } 
   };
 
   const ACTIVITIES = [
@@ -464,6 +465,14 @@
     return Math.abs(hash);
   };
 
+  // --- Helper แปลง Emoji เป็นรูปภาพ เพื่อกัน html2canvas เซฟแล้วหาย ---
+  const getEmojiImg = (emojiStr) => {
+    if (!emojiStr) return null;
+    let code = Array.from(emojiStr).map(c => c.codePointAt(0).toString(16)).join('-');
+    code = code.replace('-fe0f', ''); 
+    return `https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/${code}.svg`;
+  };
+
   // SOUND EFFECTS AUDIO API
   let _sharedAudioCtx;
   const getAudioCtx = () => {
@@ -575,7 +584,6 @@
     );
   };
 
-  // แยกเป็น Component หน้า Unlocked เพื่อโค้ดที่สะอาดขึ้น
   const UnlockedView = ({ activities, onLogout, variant, personalFortune, luckyNumber, luckyEmoji, soulmateLetter, playerName }) => {
     const [cardRevealed, setCardRevealed] = useState(false);
     const [showConfetti, setShowConfetti] = useState(true);
@@ -680,7 +688,9 @@
                 <div className="tarot-footer">
                   <div className="lucky-number-label">เลขนำโชคประจำวัน</div>
                   <div className="lucky-number-display">
-                    {luckyNumber} <span className="lucky-emoji">{luckyEmoji}</span>
+                    {luckyNumber} 
+                    {/* เปลี่ยนไปดึงไฟล์รูปภาพ SVG แทน เพื่อป้องกันปัญหา html2canvas มองไม่เห็น Emoji */}
+                    <img src={getEmojiImg(luckyEmoji)} alt={luckyEmoji} style={{ width: '42px', height: '42px', objectFit: 'contain', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))' }} crossOrigin="anonymous" />
                   </div>
                   <div className="tarot-watermark">🔮 MKT · Team Co-op 2026</div>
                 </div>
