@@ -188,15 +188,162 @@
   .soulmate-box { margin-top: 24px; padding: 16px; background: rgba(255, 215, 0, 0.1); border: 1px dashed rgba(255, 215, 0, 0.5); border-radius: 12px; color: #FFD700; font-size: 14px; font-weight: 600; letter-spacing: 0.05em; text-align: center; }
   .soulmate-box span { font-size: 18px; color: #fff; background: rgba(255,255,255,0.2); padding: 2px 10px; border-radius: 8px; margin: 0 4px; }
 
-  /* Actions & Activities */
-  .action-buttons { display: flex; gap: 16px; margin-bottom: 48px; flex-wrap: wrap; justify-content: center; width: 100%; }
-  .download-btn, .share-btn { border: none; padding: 18px 32px; border-radius: 999px; font-family: inherit; font-size: 16px; font-weight: 800; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 10px; word-break: keep-all; }
-  .download-btn { background: linear-gradient(135deg, #FFD700, #FFB347); color: #1C1132; box-shadow: 0 12px 32px rgba(255, 179, 71, 0.4); }
-  .share-btn { background: linear-gradient(135deg, #A26BEB, #6A518F); color: #fff; box-shadow: 0 12px 32px rgba(162, 107, 235, 0.4); }
-  .download-btn:hover, .share-btn:hover { transform: translateY(-3px); filter: brightness(1.1); }
-  .download-btn:active, .share-btn:active { transform: translateY(0); }
+  /* =========================================================
+     Fellowship Roster Box (ทำเนียบภาคีศิลา) - UPDATED ✨
+     ========================================================= */
+  .roster-box { 
+    background: linear-gradient(180deg, #150a26 0%, #0a0414 100%); 
+    border: 2px solid rgba(255, 215, 0, 0.3); 
+    border-radius: 16px; 
+    padding: 56px 40px; 
+    margin: 0 auto 56px; 
+    max-width: 800px; 
+    box-shadow: 
+      0 16px 40px rgba(0,0,0,0.6), 
+      0 0 20px rgba(162, 107, 235, 0.15),
+      inset 0 0 40px rgba(0,0,0,0.8),
+      inset 0 0 15px rgba(255, 215, 0, 0.15); 
+    position: relative; 
+    overflow: hidden; 
+  }
+  
+  /* Magical Border Corners */
+  .roster-ornament { position: absolute; width: 40px; height: 40px; border: 2px solid var(--gold); opacity: 0.6; transition: all 0.5s; }
+  .roster-ornament.top-left { top: 16px; left: 16px; border-right: none; border-bottom: none; }
+  .roster-ornament.top-right { top: 16px; right: 16px; border-left: none; border-bottom: none; }
+  .roster-ornament.bottom-left { bottom: 16px; left: 16px; border-right: none; border-top: none; }
+  .roster-ornament.bottom-right { bottom: 16px; right: 16px; border-left: none; border-top: none; }
+  .roster-box:hover .roster-ornament { opacity: 1; box-shadow: 0 0 15px var(--gold); }
 
-  .uniqueness-note { max-width: 640px; padding: 20px 24px; background: var(--card-bg); backdrop-filter: blur(8px); border-radius: 20px; font-size: 15px; color: var(--ink); line-height: 1.6; text-align: center; border: 2px dashed rgba(162, 107, 235, 0.4); margin-bottom: 56px; box-shadow: 0 8px 24px rgba(0,0,0,0.04); position: relative; z-index: 10; }
+  .roster-header { text-align: center; margin-bottom: 40px; position: relative; z-index: 2; }
+  .roster-header h2 { 
+    font-size: 34px; 
+    color: var(--gold); 
+    text-shadow: 0 0 15px rgba(255,215,0,0.5), 0 0 30px rgba(255,215,0,0.3); 
+    margin-bottom: 12px; 
+    font-weight: 800;
+  }
+  .roster-header p { font-size: 16px; color: #E8D5FA; opacity: 0.85; margin: 0; }
+  
+  .fellow-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; position: relative; z-index: 2; }
+  
+  /* Individual Nameplate (Rune/Plaque) */
+  .fellow-card { 
+    display: flex; align-items: center; gap: 10px; 
+    padding: 12px 24px; 
+    border-radius: 8px; /* Sharper magical look */
+    background: rgba(20, 10, 40, 0.6); 
+    border: 1px solid rgba(162, 107, 235, 0.3); 
+    font-weight: 600; font-size: 16px; color: #fff; 
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+    backdrop-filter: blur(4px);
+  }
+  .fellow-card:hover { 
+    background: rgba(40, 20, 70, 0.8); 
+    border-color: var(--team-color); 
+    box-shadow: 0 0 20px rgba(162, 107, 235, 0.5), inset 0 0 15px rgba(162, 107, 235, 0.3); 
+    transform: translateY(-4px) scale(1.02); 
+    color: #F2E9FD;
+  }
+  
+  /* Current Player Highlight */
+  .fellow-card.is-current-player { 
+    background: linear-gradient(135deg, rgba(162, 107, 235, 0.5), rgba(84, 51, 255, 0.5)); 
+    border: 1px solid var(--gold); 
+    color: #fff;
+    box-shadow: 0 0 20px var(--team-color), inset 0 0 10px var(--gold); 
+    animation: pulseRosterGlow 2s infinite alternate;
+  }
+  @keyframes pulseRosterGlow {
+    from { box-shadow: 0 0 10px var(--team-color), inset 0 0 5px var(--gold); }
+    to { box-shadow: 0 0 25px var(--team-color), inset 0 0 15px var(--gold); }
+  }
+
+  /* Staff Card */
+  .fellow-card.staff-card { 
+    background: rgba(30, 20, 0, 0.6); 
+    border: 1px dashed rgba(255, 215, 0, 0.4); 
+    color: #FFD700; 
+  }
+  .fellow-card.staff-card:hover {
+    border: 1px solid var(--gold);
+    background: rgba(50, 35, 0, 0.8);
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.4), inset 0 0 15px rgba(255, 215, 0, 0.2);
+  }
+  .fellow-card.staff-card.is-current-player { 
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.3), rgba(255, 179, 71, 0.3)); 
+    border: 2px solid #FFD700; 
+  }
+
+  .staff-divider { margin: 48px 0 24px; font-size: 14px; font-weight: 800; letter-spacing: 0.15em; color: var(--gold); text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 16px; opacity: 0.9; text-shadow: 0 0 8px rgba(255,215,0,0.4); }
+  .staff-divider::before, .staff-divider::after { content: ""; height: 1px; flex: 1; background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.5), transparent); max-width: 120px; }
+
+  /* =========================================================
+     Mystic Buttons (Action Buttons) - UPDATED ✨
+     ========================================================= */
+  .action-buttons { display: flex; gap: 24px; margin-bottom: 48px; flex-wrap: wrap; justify-content: center; width: 100%; }
+  
+  .mystic-btn {
+    position: relative;
+    background: rgba(15, 5, 25, 0.85); /* Dark crystal core */
+    backdrop-filter: blur(12px);
+    border: 1px solid transparent;
+    border-radius: 12px; 
+    padding: 16px 36px;
+    color: #fff;
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    overflow: hidden;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* Inner shimmer sweep */
+  .mystic-btn::before {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%; width: 200%; height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+    transform: rotate(45deg) translateY(-100%);
+    transition: transform 0.6s ease;
+    z-index: -1;
+  }
+  .mystic-btn:hover::before { transform: rotate(45deg) translateY(100%); }
+
+  /* Download Btn - Gold Border */
+  .mystic-btn.download-btn {
+    border-color: rgba(255, 215, 0, 0.5);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5), inset 0 0 20px rgba(255, 215, 0, 0.1);
+  }
+  .mystic-btn.download-btn:hover {
+    border-color: var(--gold);
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.6), inset 0 0 30px rgba(255, 215, 0, 0.3);
+    transform: translateY(-4px) scale(1.02);
+    text-shadow: 0 0 8px rgba(255, 215, 0, 0.8);
+  }
+  .mystic-btn.download-btn:active { transform: translateY(0) scale(0.98); }
+
+  /* Share Btn - Glowing Team Color */
+  .mystic-btn.share-btn {
+    border-color: rgba(162, 107, 235, 0.5);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5), inset 0 0 20px rgba(162, 107, 235, 0.15);
+  }
+  .mystic-btn.share-btn:hover {
+    border-color: var(--team-color);
+    box-shadow: 0 0 30px var(--team-color), inset 0 0 30px rgba(162, 107, 235, 0.4);
+    transform: translateY(-4px) scale(1.02);
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+  }
+  .mystic-btn.share-btn:active { transform: translateY(0) scale(0.98); }
+
+  .uniqueness-note { max-width: 640px; padding: 20px 24px; background: var(--card-bg); backdrop-filter: blur(8px); border-radius: 20px; font-size: 15px; color: var(--ink); line-height: 1.6; text-align: center; border: 2px dashed rgba(162, 107, 235, 0.4); margin-bottom: 40px; box-shadow: 0 8px 24px rgba(0,0,0,0.04); position: relative; z-index: 10; }
   .uniqueness-note strong { color: var(--team-color); font-weight: 800; }
 
   .activities-section { width: 100%; max-width: 1000px; text-align: center; position: relative; z-index: 10; }
@@ -248,8 +395,10 @@
     .cube-perspective { width: 240px; height: 240px; }
     .tarot-inner { padding: 32px 20px; }
     .tarot-card-title { font-size: 26px; }
-    .action-buttons { flex-direction: column; width: 100%; max-width: 320px; }
-    .download-btn, .share-btn, .reset-btn { width: 100%; justify-content: center; }
+    .roster-box { padding: 32px 20px; }
+    .action-buttons { flex-direction: column; width: 100%; max-width: 320px; gap: 16px; }
+    .mystic-btn, .reset-btn { width: 100%; justify-content: center; }
+    .fellow-card { width: 100%; justify-content: center; }
   }
 </style>
 
@@ -265,13 +414,10 @@
 
   // --- Constants & Data ---
   const VIP_PIN = "9999";
-
-  // รายชื่อผู้จัดการ 5 ท่าน (เพื่อ Bypass ค่ายกล)
   const MKT_MANAGERS = ["วรพล", "นริศรา", "ศุภฤกษ์", "ธนภูมิ", "ถาวร"];
   
-  // จัดกลุ่มตาม Sheet ล่าสุดเป๊ะ 100% (อ้างอิงจากไฟล์ Engagement Plan 2026 MKT&CRC(อัญมณี).csv)
   const PLAYER_DATA = {
-    // กลุ่ม 1 - 🔴 ทับทิมไฟ (8 คน)
+    // กลุ่ม 1 - 🔴 ทับทิมไฟ
     "นริศรา": { group: 1, dept: "sun" },
     "จิตรติมา": { group: 1, dept: "sun" },
     "โชคกร": { group: 1, dept: "sun" },
@@ -280,7 +426,7 @@
     "ชรัญญา": { group: 1, dept: "moon" },
     "นฤมล": { group: 1, dept: "moon" },
 
-    // กลุ่ม 2 - 🔵 ไพลินวารี (8 คน)
+    // กลุ่ม 2 - 🔵 ไพลินวารี
     "ถาวร": { group: 2, dept: "sun" },
     "ชัยรัฐพล": { group: 2, dept: "sun" },
     "รัตน์ชณัฏฐ์": { group: 2, dept: "sun" },
@@ -289,7 +435,7 @@
     "พริมาห์": { group: 2, dept: "moon" },
     "จิรัชยา": { group: 2, dept: "moon" },
 
-    // กลุ่ม 3 - 🟢 มรกตพฤกษา (8 คน)
+    // กลุ่ม 3 - 🟢 มรกตพฤกษา
     "วรพล": { group: 3, dept: "sun" },
     "ชัชเขตต์": { group: 3, dept: "sun" },
     "ปิ่นปินัทธ์": { group: 3, dept: "sun" },
@@ -298,7 +444,7 @@
     "เชษฐา": { group: 3, dept: "moon" },
     "รวินท์": { group: 3, dept: "moon" },
 
-    // กลุ่ม 4 - 🟡 บุษราคัมแสง (9 คน)
+    // กลุ่ม 4 - 🟡 บุษราคัมแสง
     "ศุภฤกษ์": { group: 4, dept: "sun" },
     "ภาริณ": { group: 4, dept: "sun" },
     "ภูษณ": { group: 4, dept: "sun" },
@@ -307,7 +453,7 @@
     "วฤชา": { group: 4, dept: "moon" },
     "ชัญญานุช": { group: 4, dept: "moon" },
 
-    // กลุ่ม 5 - 🟣 อเมทิสต์มายา (9 คน)
+    // กลุ่ม 5 - 🟣 อเมทิสต์มายา
     "ธนภูมิ": { group: 5, dept: "sun" },
     "นานารัตน์": { group: 5, dept: "sun" },
     "รมันยา": { group: 5, dept: "sun" },
@@ -316,14 +462,14 @@
     "สิริญา": { group: 5, dept: "moon" },
     "รวินันท์": { group: 5, dept: "moon" },
 
-    // ✨ ทีมงาน (กระจายลงในกลุ่ม 1-5 ตามการบาลานซ์ล่าสุด)
-    "ชวัลนุช": { group: 1, dept: "moon" },
-    "สุเชาว์": { group: 2, dept: "sun" },
-    "กัลยานิษฐ์": { group: 3, dept: "moon" },
-    "อัมรา": { group: 4, dept: "sun" },
-    "รัตติกาล": { group: 4, dept: "moon" }, 
-    "วิชญะ": { group: 5, dept: "sun" },
-    "สรัญญา": { group: 5, dept: "moon" } 
+    // ✨ ทีมงาน (กระจายลงในกลุ่ม 1-5)
+    "ชวัลนุช": { group: 1, dept: "moon", isStaff: true },
+    "สุเชาว์": { group: 2, dept: "sun", isStaff: true },
+    "กัลยานิษฐ์": { group: 3, dept: "moon", isStaff: true },
+    "อัมรา": { group: 4, dept: "sun", isStaff: true },
+    "รัตติกาล": { group: 4, dept: "moon", isStaff: true }, 
+    "วิชญะ": { group: 5, dept: "sun", isStaff: true },
+    "สรัญญา": { group: 5, dept: "moon", isStaff: true } 
   };
 
   const ACTIVITIES = [
@@ -335,11 +481,11 @@
   ];
 
   const VARIANTS = {
-    ruby:     { key: 'ruby', name: 'ทับทิมไฟ', icon: '🔴', pin: '1472', color: '#FF3366', bg1: '#ffe4e6', bg2: '#fecdd3', darkBg1: '#4c1d24', darkBg2: '#2a0a10' },
-    sapphire: { key: 'sapphire', name: 'ไพลินวารี', icon: '🔵', pin: '2583', color: '#00A8FF', bg1: '#e0e7ff', bg2: '#c7d2fe', darkBg1: '#1e2642', darkBg2: '#0d1326' },
-    emerald:  { key: 'emerald', name: 'มรกตพฤกษา', icon: '🟢', pin: '3694', color: '#00D084', bg1: '#d1fae5', bg2: '#a7f3d0', darkBg1: '#133526', darkBg2: '#081a12' },
-    topaz:    { key: 'topaz', name: 'บุษราคัมแสง', icon: '🟡', pin: '4289', color: '#FF9F00', bg1: '#fef3c7', bg2: '#fde047', darkBg1: '#4a350d', darkBg2: '#241804' },
-    amethyst: { key: 'amethyst', name: 'อเมทิสต์มายา', icon: '🟣', pin: '5718', color: '#D558FF', bg1: '#f3e8fd', bg2: '#e9d5ff', darkBg1: '#3b0d4c', darkBg2: '#1a0524' }
+    ruby:     { groupNum: 1, key: 'ruby', name: 'ทับทิมไฟ', icon: '🔴', pin: '1472', color: '#FF3366', bg1: '#ffe4e6', bg2: '#fecdd3', darkBg1: '#4c1d24', darkBg2: '#2a0a10' },
+    sapphire: { groupNum: 2, key: 'sapphire', name: 'ไพลินวารี', icon: '🔵', pin: '2583', color: '#00A8FF', bg1: '#e0e7ff', bg2: '#c7d2fe', darkBg1: '#1e2642', darkBg2: '#0d1326' },
+    emerald:  { groupNum: 3, key: 'emerald', name: 'มรกตพฤกษา', icon: '🟢', pin: '3694', color: '#00D084', bg1: '#d1fae5', bg2: '#a7f3d0', darkBg1: '#133526', darkBg2: '#081a12' },
+    topaz:    { groupNum: 4, key: 'topaz', name: 'บุษราคัมแสง', icon: '🟡', pin: '4289', color: '#FF9F00', bg1: '#fef3c7', bg2: '#fde047', darkBg1: '#4a350d', darkBg2: '#241804' },
+    amethyst: { groupNum: 5, key: 'amethyst', name: 'อเมทิสต์มายา', icon: '🟣', pin: '5718', color: '#D558FF', bg1: '#f3e8fd', bg2: '#e9d5ff', darkBg1: '#3b0d4c', darkBg2: '#1a0524' }
   };
 
   const PERSONAL_FORTUNES = [
@@ -465,7 +611,7 @@
     return Math.abs(hash);
   };
 
-  // --- Helper แปลง Emoji เป็นรูปภาพ เพื่อกัน html2canvas เซฟแล้วหาย ---
+  // --- Helper แปลง Emoji เป็นรูปภาพ ---
   const getEmojiImg = (emojiStr) => {
     if (!emojiStr) return null;
     let code = Array.from(emojiStr).map(c => c.codePointAt(0).toString(16)).join('-');
@@ -634,11 +780,16 @@
               return;
             }
           }
-          // No alert, use Toast pop-up
           showToastMsg('เบราว์เซอร์ไม่รองรับการแชร์แบบเด้งอัตโนมัติ กรุณากดปุ่ม "บันทึกรูป" แทนนะครับ');
         }, 'image/png');
       } catch (err) { console.error('Share failed:', err); }
     };
+
+    // ----- ดึงรายชื่อคนที่มีศิลาสีเดียวกัน -----
+    const currentGroupNum = variant.groupNum;
+    const groupMembersEntries = Object.entries(PLAYER_DATA).filter(([name, data]) => data.group === currentGroupNum);
+    const regularMembers = groupMembersEntries.filter(([name, data]) => !data.isStaff);
+    const staffMembers = groupMembersEntries.filter(([name, data]) => data.isStaff);
 
     return (
       <div className="unlocked-view glow-entrance" style={{width: '100%'}}>
@@ -689,7 +840,6 @@
                   <div className="lucky-number-label">เลขนำโชคประจำวัน</div>
                   <div className="lucky-number-display">
                     {luckyNumber} 
-                    {/* เปลี่ยนไปดึงไฟล์รูปภาพ SVG แทน เพื่อป้องกันปัญหา html2canvas มองไม่เห็น Emoji */}
                     <img src={getEmojiImg(luckyEmoji)} alt={luckyEmoji} style={{ width: '42px', height: '42px', objectFit: 'contain', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))' }} crossOrigin="anonymous" />
                   </div>
                   <div className="tarot-watermark">🔮 MKT · Team Co-op 2026</div>
@@ -708,15 +858,50 @@
         </div>
 
         {cardRevealed && (
-          <div className="fade-in" style={{width: '100%', maxWidth: '640px'}}>
-            <div className="action-buttons">
-              <button className="download-btn" onClick={downloadCard}>📥 บันทึกรูป</button>
-              <button className="share-btn" onClick={shareCard}>📲 แชร์ลงไลน์กลุ่มกันเถอะ</button>
+          <div className="fade-in" style={{width: '100%', maxWidth: '800px'}}>
+            
+            {/* ----- Mystic Action Buttons ----- */}
+            <div className="action-buttons" style={{maxWidth: '640px', margin: '0 auto 40px'}}>
+              <button className="mystic-btn download-btn" onClick={downloadCard}>
+                📥 บันทึกรูปลงอุปกรณ์
+              </button>
+              <button className="mystic-btn share-btn" onClick={shareCard}>
+                ✨ แชร์พลังเวท (แชร์ลงไลน์)
+              </button>
             </div>
-            <div className="uniqueness-note" style={{margin: '0 auto 56px'}}>
+            
+            <div className="uniqueness-note" style={{margin: '0 auto 40px', maxWidth: '640px'}}>
               💡 <strong>ความลับแห่งดวงดาว:</strong> ระบบนี้มีรูปแบบชะตาที่แตกต่างกันถึง <strong>720,000 รูปแบบ</strong> (โอกาสซ้ำกันมีเพียง 0.00013%)<br/>
               แชร์ไพ่ใบนี้ลงกรุ๊ปสิ! หากบังเอิญเจอใครในทีมที่ได้ <strong>ไพ่และสัญลักษณ์</strong> ตรงกับคุณเป๊ะๆ แสดงว่าชะตาต้องกันสุดๆ!
             </div>
+
+            {/* ----- Fellowship Roster Section (Mystic Registry) ----- */}
+            <div className="roster-box fade-in">
+              <div className="roster-ornament top-left"></div>
+              <div className="roster-ornament top-right"></div>
+              <div className="roster-ornament bottom-left"></div>
+              <div className="roster-ornament bottom-right"></div>
+              
+              <div className="roster-header">
+                <h2>📜 ทำเนียบภาคีศิลา{variant.name}</h2>
+                <p>ดวงดาวได้ขีดเขียนให้ท่านเหล่านี้คือผู้ร่วมชะตาในมิติเดียวกัน</p>
+              </div>
+
+              <div className="fellow-grid">
+                {regularMembers.map(([name, data]) => {
+                  const isSun = data.dept === 'sun';
+                  const isMe = playerName.toLowerCase().includes(name.toLowerCase());
+                  return (
+                    <div key={name} className={`fellow-card ${isMe ? 'is-current-player' : ''}`}>
+                      <span className="fellow-icon">{isSun ? '☀️' : '🌙'}</span>
+                      <span className="fellow-name">{name}{isMe ? ' (คุณ)' : ''}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+            {/* ------------------------------------- */}
+            
           </div>
         )}
 
@@ -770,7 +955,7 @@
       if (isDarkMode) document.body.classList.add('dark-mode');
       else document.body.classList.remove('dark-mode');
       
-      // Dynamic Background Handling (Override CSS variables inline based on theme + gem)
+      // Dynamic Background Handling
       if (isLoggedIn && colorKey) {
         const variant = VARIANTS[colorKey];
         document.body.style.setProperty('--bg-color-1', isDarkMode && variant.darkBg1 ? variant.darkBg1 : variant.bg1);
@@ -806,7 +991,7 @@
       const colorKeys = Object.keys(VARIANTS); 
       let aRole, aColor;
 
-      // จัดการทีมแบบข้ามสายงานตามชีตและกลุ่ม (Cross-Department 100%)
+      // จัดการทีมแบบข้ามสายงานตามชีตและกลุ่ม
       if (playerKey) {
         aRole = PLAYER_DATA[playerKey].dept;
         const g = PLAYER_DATA[playerKey].group;
@@ -817,7 +1002,6 @@
         aColor = colorKeys[generateHash(nameLower+"_c") % colorKeys.length];
       }
 
-      // Personalized Fortune Calculation (Hash-based)
       const assignedFortuneIdx = generateHash(nameLower + "_fortune") % PERSONAL_FORTUNES.length; 
       const assignedLuckyNum = (generateHash(nameLower + "_lucky") % 90) + 10;
       const assignedLuckyEmoji = LUCKY_EMOJIS[generateHash(nameLower + "_emoji") % LUCKY_EMOJIS.length];
@@ -835,9 +1019,7 @@
       setSoulmateLetter(assignedSoulmate);
       setIsLoggedIn(true);
       
-      // ให้ปรับโหมดมืดอัตโนมัติหากเป็นภาคีจันทรา
       setIsDarkMode(aRole === 'moon');
-
       if (savedUnlocked) setUnlockedState(savedUnlocked);
     };
 
@@ -855,7 +1037,6 @@
       const correctPin = VARIANTS[colorKey].pin;
       const isManagerLevel = MKT_MANAGERS.some(m => playerName.toLowerCase().includes(m.toLowerCase()));
       
-      // Managers bypass with 9999 or correct pin. Reg users only correct pin.
       if ((attempt === VIP_PIN && isManagerLevel) || attempt === correctPin) {
         setTimeout(() => {
           playSound('success');
