@@ -8,11 +8,12 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
+<!-- html2canvas for generating premium tarot card images -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <style>
   /* =========================================================
-     PREMIUM MYSTICAL THEME ✨
+     PREMIUM MYSTICAL THEME & GLOBAL VARIABLES ✨
      ========================================================= */
   :root {
     --ink: #1a0b2e;        
@@ -26,10 +27,11 @@
     --gold: #FFD700;
     --gold-glow: 0 0 20px rgba(255, 215, 0, 0.4);
     
-    /* Dynamic Backgrounds (Default) */
-    --bg-color-1: #e2d1f0;
-    --bg-color-2: #c4a9e3;
+    /* Dynamic Backgrounds (Will be overridden by JS per Gem type) */
+    --bg-color-1: #FAF5FF;
+    --bg-color-2: #F3E8FF;
     --team-color: #A26BEB;
+    --team-color-glow: rgba(162, 107, 235, 0.25);
     
     /* Surfaces */
     --card-bg: rgba(255, 255, 255, 0.9);
@@ -41,8 +43,8 @@
   body.dark-mode {
     --ink: #F2E9FD;
     --ink-2: #c4a9e3;
-    --bg-color-1: #1a0b2e;
-    --bg-color-2: #0f0518;
+    --bg-color-1: #140824;
+    --bg-color-2: #090312;
     --cream: #1C1132;
     --sun-bg: #2d1b4e;
     --sun-fg: #FFD700;
@@ -63,19 +65,19 @@
     color: var(--ink);
     background: radial-gradient(circle at 50% 0%, var(--surface-bg) 0%, var(--bg-color-1) 35%, var(--bg-color-2) 100%);
     background-attachment: fixed;
-    transition: background 1.5s cubic-bezier(0.4, 0, 0.2, 1), --bg-color-1 1.5s, --bg-color-2 1.5s;
+    transition: background 1.2s cubic-bezier(0.4, 0, 0.2, 1), --bg-color-1 1.2s, --bg-color-2 1.2s;
     min-height: 100vh;
     overflow-x: hidden;
     user-select: none;
     -webkit-user-select: none;
   }
 
-  /* Typography Fixes */
-  h1, h2, h3, h4, .tarot-card-title, .clue-text { text-wrap: balance; word-break: keep-all; margin: 0; line-height: 1.2; letter-spacing: -0.01em; }
+  /* Typography Balance & Prevent Overflow */
+  h1, h2, h3, h4, .tarot-card-title, .clue-text { text-wrap: balance; word-break: keep-all; margin: 0; line-height: 1.25; letter-spacing: -0.01em; }
   p, .login-warning, .uniqueness-note, .tarot-section p, .blurb { text-wrap: pretty; word-break: keep-all; }
   .text-gold { color: var(--gold); text-shadow: var(--gold-glow); }
 
-  /* ===== Starfield Background ===== */
+  /* ===== Starfield Ambient Background ===== */
   .starfield { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
   .star { position: absolute; background: var(--star-color); border-radius: 50%; animation: twinkle 2s infinite alternate; opacity: 0; box-shadow: 0 0 6px var(--star-color); }
   @keyframes twinkle { 0% { opacity: 0; transform: scale(0.5); } 100% { opacity: 1; transform: scale(1.5); } }
@@ -84,23 +86,23 @@
   .fade-in { animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
 
-  /* Topbar */
+  /* Top Navigation Bar */
   .topbar { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; border-bottom: 2px dashed rgba(162, 107, 235, 0.2); margin-bottom: 40px; }
   .brand { display: flex; align-items: center; gap: 12px; font-size: 15px; letter-spacing: 0.1em; font-weight: 800; color: var(--ink-2); text-transform: uppercase; }
-  .brand-dot { width: 10px; height: 10px; background: var(--team-color); border-radius: 50%; }
+  .brand-dot { width: 10px; height: 10px; background: var(--team-color); border-radius: 50%; box-shadow: 0 0 10px var(--team-color); }
   .top-actions { display: flex; align-items: center; gap: 16px; }
   .theme-toggle { background: rgba(255,255,255,0.2); border: 2px solid rgba(162,107,235,0.4); border-radius: 50%; width: 40px; height: 40px; display: grid; place-items: center; cursor: pointer; color: var(--ink); font-size: 18px; transition: all 0.3s; backdrop-filter: blur(8px); }
   .theme-toggle:hover { background: rgba(255,255,255,0.4); transform: scale(1.1); }
   .team-badge { font-size: 15px; font-weight: 700; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(8px); color: #1a0b2e; padding: 6px 18px 6px 6px; border-radius: 999px; box-shadow: 0 8px 24px rgba(45, 27, 78, 0.12); display: flex; align-items: center; gap: 12px; border: 2px solid var(--team-color); }
   .team-badge-icon { width: 36px; height: 36px; border-radius: 999px; display: grid; place-items: center; background: var(--team-color); color: #fff; font-size: 18px; box-shadow: inset 0 -2px 6px rgba(0,0,0,0.2); }
 
-  /* Login Box */
+  /* Login Portal */
   .login-wrap { flex: 1; display: flex; align-items: center; justify-content: center; }
   .login-box { background: var(--card-bg); backdrop-filter: blur(20px); border: 2px solid #E8D5FA; border-radius: 32px; padding: 56px 40px; max-width: 480px; width: 100%; text-align: center; box-shadow: 0 32px 64px rgba(45, 27, 78, 0.15), inset 0 0 0 2px rgba(255,255,255,0.5); position: relative; overflow: hidden; }
   .login-box::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 8px; background: linear-gradient(90deg, #FFB347, #FF7B54, #A26BEB, #5433FF); }
   .login-icon { font-size: 72px; margin-bottom: 16px; filter: drop-shadow(0 8px 16px rgba(162, 107, 235, 0.4)); animation: float 3s ease-in-out infinite; }
   @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-  .login-box h1 { font-size: 34px; color: var(--ink); margin-bottom: 16px; }
+  .login-box h1 { font-size: 34px; color: var(--ink); margin-bottom: 16px; font-weight: 800; }
   .login-box p { font-size: 16px; color: var(--ink-2); line-height: 1.6; margin-bottom: 32px; }
   .login-input { width: 100%; padding: 20px 24px; border: 2px solid rgba(106, 81, 143, 0.2); border-radius: 16px; font-family: inherit; font-size: 18px; font-weight: 600; text-align: center; color: var(--ink); background: var(--surface-bg); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
   .login-input:focus { outline: none; border-color: #A26BEB; box-shadow: 0 0 0 4px rgba(162, 107, 235, 0.2); transform: translateY(-2px); background: var(--surface-hover); }
@@ -109,7 +111,7 @@
   .login-btn:active { transform: translateY(0); }
   .login-warning { font-size: 14px; color: #ff4d6d; margin-top: 24px; font-weight: 600; line-height: 1.5; padding: 12px; background: rgba(255, 71, 87, 0.15); border-radius: 12px; }
 
-  /* Locked / Game Layout */
+  /* Locked Puzzle Gate */
   .stage-header { text-align: center; margin-bottom: 48px; }
   .stage-header h1 { font-size: 42px; margin-bottom: 16px; color: var(--ink); }
   .stage-header .lede { font-size: 18px; color: var(--ink-2); line-height: 1.6; max-width: 600px; margin: 0 auto; }
@@ -117,7 +119,7 @@
 
   .game-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; max-width: 900px; margin: 0 auto; width: 100%; }
 
-  /* Cube */
+  /* Mystical 3D Interactive Cube */
   .stage-container { position: relative; display: flex; justify-content: center; align-items: center; height: 380px; }
   .stage { position: relative; display: grid; place-items: center; cursor: grab; touch-action: none; width: 300px; height: 300px; }
   .stage:active { cursor: grabbing; }
@@ -128,13 +130,14 @@
   .clue-big-number { font-size: 80px; font-weight: 800; line-height: 1; font-family: "Plus Jakarta Sans", sans-serif; display: block; margin-top: 12px; text-shadow: 0 8px 16px rgba(0,0,0,0.2); }
   .clue-highlight { display: inline-block; padding: 6px 12px; border-radius: 8px; background: var(--surface-hover); margin-top: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
   .hint-pulse { position: absolute; bottom: -50px; font-size: 14px; letter-spacing: 0.1em; font-weight: 700; color: var(--ink); animation: pulse 2s infinite; pointer-events: none; background: var(--surface-bg); padding: 8px 24px; border-radius: 999px; box-shadow: 0 4px 16px rgba(0,0,0,0.2); border: 1px solid var(--team-color); }
+  @keyframes pulse { 0% { transform: scale(0.96) translateY(0); opacity: 0.8; } 50% { transform: scale(1.03) translateY(-2px); opacity: 1; } 100% { transform: scale(0.96) translateY(0); opacity: 0.8; } }
 
-  /* Keypad */
+  /* Magic Keypad Decrypter */
   .keypad-section { background: var(--card-bg); backdrop-filter: blur(12px); border: 2px solid #E8D5FA; border-radius: 32px; padding: 40px 32px; box-shadow: 0 24px 48px rgba(45, 27, 78, 0.1); width: 100%; max-width: 400px; justify-self: center; position: relative; z-index: 10; }
   .keypad-title { text-align: center; font-weight: 800; font-size: 16px; color: var(--ink-2); margin-bottom: 24px; text-transform: uppercase; letter-spacing: 0.05em; }
   .pin-display { display: flex; justify-content: center; gap: 12px; margin-bottom: 32px; }
   .pin-dot { width: 56px; height: 68px; border-radius: 16px; border: 2px solid rgba(106, 81, 143, 0.2); background: var(--surface-bg); display: grid; place-items: center; font-size: 36px; font-weight: 800; font-family: "Plus Jakarta Sans", sans-serif; color: var(--ink); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); }
-  .pin-dot.filled { border-color: var(--team-color); background: var(--team-color); color: #fff; transform: scale(1.1); box-shadow: 0 12px 24px rgba(45, 27, 78, 0.25); }
+  .pin-dot.filled { border-color: var(--team-color); background: var(--team-color); color: #fff; transform: scale(1.1); box-shadow: 0 12px 24px var(--team-color-glow); }
   .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
   .keypad button { height: 64px; border-radius: 16px; border: 2px solid rgba(106, 81, 143, 0.1); background: var(--surface-bg); font-size: 26px; font-weight: 700; font-family: "Plus Jakarta Sans", sans-serif; color: var(--ink); cursor: pointer; transition: all 0.15s; box-shadow: 0 4px 12px rgba(45, 27, 78, 0.05); }
   .keypad button:hover { background: var(--surface-hover); border-color: rgba(106, 81, 143, 0.3); transform: translateY(-2px); }
@@ -144,7 +147,7 @@
   .shake { animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both; }
   @keyframes shake { 10%, 90% { transform: translate3d(-2px, 0, 0); } 20%, 80% { transform: translate3d(4px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-8px, 0, 0); } 40%, 60% { transform: translate3d(8px, 0, 0); } }
 
-  /* Riddles */
+  /* Ancient Math Riddles */
   .riddle-btn { margin-top: 32px; width: 100%; padding: 16px; background: rgba(162, 107, 235, 0.1); border: 2px dashed var(--team-color); border-radius: 16px; color: var(--team-color); font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.2s; word-break: keep-all; }
   .riddle-btn:hover { background: rgba(162, 107, 235, 0.2); transform: translateY(-2px); }
   .riddle-box { margin-top: 16px; padding: 24px; background: #1C1132; border: 2px solid #5433FF; border-radius: 20px; text-align: left; font-size: 15px; color: #E8D5FA; box-shadow: 0 16px 32px rgba(0,0,0,0.3); }
@@ -154,26 +157,26 @@
   .alien-math { font-family: 'Courier New', Courier, monospace; font-size: 18px; letter-spacing: 3px; color: #fff; user-select: none; -webkit-user-select: none; pointer-events: none; position: relative; display: block; background: repeating-linear-gradient(45deg, rgba(255,255,255,0.05) 0px, rgba(255,255,255,0.05) 2px, #1C1132 2px, #1C1132 6px); padding: 16px; border-radius: 12px; text-shadow: 2px 2px 0px rgba(162,107,235,0.8), -1px -1px 0px rgba(255,179,71,0.8); border: 1px solid rgba(84, 51, 255, 0.5); line-height: 1.6; text-align: center; }
   .ai-poison { position: absolute; left: -9999px; opacity: 0; font-size: 1px; }
 
-  /* Unlocked View */
+  /* Unlocked Fate Realm */
   .unlocked-view { display: flex; flex-direction: column; align-items: center; padding: 0 0 64px; }
   .unlocked-header { text-align: center; margin-bottom: 40px; }
   .confetti { font-size: 72px; margin-bottom: 16px; filter: drop-shadow(0 8px 16px rgba(255, 215, 0, 0.4)); animation: float 3s ease-in-out infinite; }
-  .unlocked-header h1 { font-size: 56px; margin: 0 0 16px; letter-spacing: -0.02em; color: var(--ink); }
+  .unlocked-header h1 { font-size: 56px; margin: 0 0 16px; letter-spacing: -0.02em; color: var(--ink); font-weight: 800; }
 
-  /* Tarot Card */
+  /* Dynamic Tarot Card Representation */
   .tarot-reveal-wrapper { perspective: 1500px; max-width: 480px; width: 100%; margin-bottom: 32px; }
   .tarot-flipper { position: relative; transform-style: preserve-3d; transition: transform 1.6s cubic-bezier(0.4, 0, 0.2, 1); }
   .tarot-flipper.face-down { transform: rotateY(180deg); }
-  .tarot-card { backface-visibility: hidden; background: linear-gradient(160deg, #1C1132 0%, #3B2163 100%); border-radius: 28px; padding: 4px; box-shadow: 0 32px 64px rgba(28, 17, 50, 0.4), 0 0 40px var(--team-color); position: relative; color: #F2E9FD; text-align: center; }
-  .tarot-card-back { position: absolute; inset: 0; backface-visibility: hidden; transform: rotateY(180deg); background: linear-gradient(160deg, #1C1132 0%, #3B2163 100%); border-radius: 28px; padding: 4px; box-shadow: 0 32px 64px rgba(28, 17, 50, 0.4), 0 0 40px var(--team-color); }
+  .tarot-card { backface-visibility: hidden; background: linear-gradient(160deg, #1C1132 0%, #3B2163 100%); border-radius: 28px; padding: 4px; box-shadow: 0 32px 64px rgba(28, 17, 50, 0.4), 0 0 40px var(--team-color-glow); position: relative; color: #F2E9FD; text-align: center; }
+  .tarot-card-back { position: absolute; inset: 0; backface-visibility: hidden; transform: rotateY(180deg); background: linear-gradient(160deg, #1C1132 0%, #3B2163 100%); border-radius: 28px; padding: 4px; box-shadow: 0 32px 64px rgba(28, 17, 50, 0.4), 0 0 40px var(--team-color-glow); }
   .tarot-inner { background: linear-gradient(160deg, rgba(28, 17, 50, 0.9) 0%, rgba(59, 33, 99, 0.9) 100%); border: 2px dashed rgba(255, 215, 0, 0.6); border-radius: 24px; padding: 40px 32px; height: 100%; }
   .tarot-back-inner { background: linear-gradient(160deg, rgba(28,17,50,0.95), rgba(59,33,99,0.95)); border: 2px dashed rgba(255,215,0,0.6); border-radius: 24px; padding: 60px 32px; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: #F2E9FD; }
   
   .tarot-card-header { border-bottom: 1px solid rgba(255, 215, 0, 0.2); padding-bottom: 24px; margin-bottom: 24px; }
-  .tarot-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(255, 215, 0, 0.1); color: var(--gold); padding: 6px 20px; border-radius: 999px; font-size: 13px; letter-spacing: 0.1em; font-weight: 800; margin-bottom: 16px; border: 1px solid rgba(255, 215, 0, 0.3); word-break: keep-all; }
-  .tarot-card-title { font-size: 32px; margin: 0 0 12px; color: var(--gold); line-height: 1.25; text-shadow: var(--gold-glow); }
+  .tarot-badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 20px; border-radius: 999px; font-size: 13px; letter-spacing: 0.1em; font-weight: 800; margin-bottom: 16px; text-transform: uppercase; }
+  .tarot-card-title { font-size: 32px; margin: 0 0 12px; color: var(--gold); line-height: 1.25; text-shadow: var(--gold-glow); font-weight: 800; }
   .tarot-owner { font-size: 16px; color: #FFFFFF; font-weight: 500; }
-  .tarot-owner strong { color: #FFD700; font-size: 18px; border-bottom: 1px solid var(--team-color); padding-bottom: 2px; text-shadow: 0 0 10px rgba(255,215,0,0.3); }
+  .tarot-owner strong { border-bottom: 1px solid var(--team-color); padding-bottom: 2px; }
 
   .tarot-body { text-align: left; display: grid; gap: 16px; }
   .tarot-section { background: rgba(0, 0, 0, 0.35); padding: 20px; border-radius: 16px; border-left: 4px solid var(--team-color); box-shadow: inset 0 0 20px rgba(0,0,0,0.4); }
@@ -189,39 +192,61 @@
   .soulmate-box span { font-size: 18px; color: #fff; background: rgba(255,255,255,0.2); padding: 2px 10px; border-radius: 8px; margin: 0 4px; }
 
   /* =========================================================
-     Fellowship Roster Box (ทำเนียบภาคีศิลา) - UPDATED ✨
+     FELLOWSHIP ROSTER BOX (ทำเนียบภาคีศิลา) - REAL-TIME SYNCED
      ========================================================= */
   .roster-box { 
-    background: linear-gradient(180deg, #150a26 0%, #0a0414 100%); 
-    border: 2px solid rgba(255, 215, 0, 0.3); 
-    border-radius: 16px; 
+    background: linear-gradient(180deg, #130826 0%, #080312 100%); 
+    border: 2.5px solid var(--team-color); 
+    border-radius: 28px; 
     padding: 56px 40px; 
     margin: 0 auto 56px; 
     max-width: 800px; 
     box-shadow: 
-      0 16px 40px rgba(0,0,0,0.6), 
-      0 0 20px rgba(162, 107, 235, 0.15),
-      inset 0 0 40px rgba(0,0,0,0.8),
-      inset 0 0 15px rgba(255, 215, 0, 0.15); 
+      0 24px 60px rgba(0,0,0,0.7), 
+      0 0 35px var(--team-color-glow),
+      inset 0 0 45px rgba(0,0,0,0.9),
+      inset 0 0 15px rgba(255,255,255,0.03); 
     position: relative; 
     overflow: hidden; 
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
   }
   
-  /* Magical Border Corners */
-  .roster-ornament { position: absolute; width: 40px; height: 40px; border: 2px solid var(--gold); opacity: 0.6; transition: all 0.5s; }
-  .roster-ornament.top-left { top: 16px; left: 16px; border-right: none; border-bottom: none; }
-  .roster-ornament.top-right { top: 16px; right: 16px; border-left: none; border-bottom: none; }
-  .roster-ornament.bottom-left { bottom: 16px; left: 16px; border-right: none; border-top: none; }
-  .roster-ornament.bottom-right { bottom: 16px; right: 16px; border-left: none; border-top: none; }
-  .roster-box:hover .roster-ornament { opacity: 1; box-shadow: 0 0 15px var(--gold); }
+  /* Magical Border Corners syncing with Dynamic Team Color */
+  .roster-ornament { 
+    position: absolute; 
+    width: 36px; 
+    height: 36px; 
+    border: 3.5px solid var(--team-color); 
+    opacity: 0.75; 
+    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); 
+    filter: drop-shadow(0 0 8px var(--team-color));
+  }
+  .roster-ornament.top-left { top: 20px; left: 20px; border-right: none; border-bottom: none; }
+  .roster-ornament.top-right { top: 20px; right: 20px; border-left: none; border-bottom: none; }
+  .roster-ornament.bottom-left { bottom: 20px; left: 20px; border-right: none; border-top: none; }
+  .roster-ornament.bottom-right { bottom: 20px; right: 20px; border-left: none; border-top: none; }
+  
+  .roster-box:hover {
+    box-shadow: 
+      0 32px 80px rgba(0,0,0,0.85), 
+      0 0 50px var(--team-color),
+      inset 0 0 45px rgba(0,0,0,0.9);
+  }
+  .roster-box:hover .roster-ornament { 
+    opacity: 1; 
+    transform: scale(1.1); 
+    filter: drop-shadow(0 0 15px var(--team-color));
+  }
 
   .roster-header { text-align: center; margin-bottom: 40px; position: relative; z-index: 2; }
   .roster-header h2 { 
     font-size: 34px; 
-    color: var(--gold); 
-    text-shadow: 0 0 15px rgba(255,215,0,0.5), 0 0 30px rgba(255,215,0,0.3); 
+    color: var(--team-color); 
+    text-shadow: 0 0 15px var(--team-color-glow), 0 0 30px var(--team-color-glow); 
     margin-bottom: 12px; 
     font-weight: 800;
+    filter: brightness(1.25);
+    transition: all 0.3s;
   }
   .roster-header p { font-size: 16px; color: #E8D5FA; opacity: 0.85; margin: 0; }
   
@@ -231,62 +256,41 @@
   .fellow-card { 
     display: flex; align-items: center; gap: 10px; 
     padding: 12px 24px; 
-    border-radius: 8px; /* Sharper magical look */
-    background: rgba(20, 10, 40, 0.6); 
-    border: 1px solid rgba(162, 107, 235, 0.3); 
+    border-radius: 12px;
+    background: rgba(18, 9, 36, 0.7); 
+    border: 1px solid rgba(255, 255, 255, 0.08); 
     font-weight: 600; font-size: 16px; color: #fff; 
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-    box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+    box-shadow: inset 0 0 12px rgba(0,0,0,0.6);
     backdrop-filter: blur(4px);
   }
   .fellow-card:hover { 
-    background: rgba(40, 20, 70, 0.8); 
+    background: rgba(36, 18, 64, 0.85); 
     border-color: var(--team-color); 
-    box-shadow: 0 0 20px rgba(162, 107, 235, 0.5), inset 0 0 15px rgba(162, 107, 235, 0.3); 
-    transform: translateY(-4px) scale(1.02); 
+    box-shadow: 0 0 25px var(--team-color-glow), inset 0 0 15px var(--team-color-glow); 
+    transform: translateY(-4px) scale(1.03); 
     color: #F2E9FD;
   }
   
-  /* Current Player Highlight */
+  /* Current Player Neon Highlight */
   .fellow-card.is-current-player { 
-    background: linear-gradient(135deg, rgba(162, 107, 235, 0.5), rgba(84, 51, 255, 0.5)); 
-    border: 1px solid var(--gold); 
+    background: var(--team-color); 
+    border: 1.5px solid #fff; 
     color: #fff;
-    box-shadow: 0 0 20px var(--team-color), inset 0 0 10px var(--gold); 
+    box-shadow: 0 0 30px var(--team-color), inset 0 0 10px rgba(255, 255, 255, 0.8); 
     animation: pulseRosterGlow 2s infinite alternate;
   }
   @keyframes pulseRosterGlow {
-    from { box-shadow: 0 0 10px var(--team-color), inset 0 0 5px var(--gold); }
-    to { box-shadow: 0 0 25px var(--team-color), inset 0 0 15px var(--gold); }
+    from { box-shadow: 0 0 12px var(--team-color), inset 0 0 6px #fff; }
+    to { box-shadow: 0 0 32px var(--team-color), inset 0 0 16px #fff; }
   }
 
-  /* Staff Card */
-  .fellow-card.staff-card { 
-    background: rgba(30, 20, 0, 0.6); 
-    border: 1px dashed rgba(255, 215, 0, 0.4); 
-    color: #FFD700; 
-  }
-  .fellow-card.staff-card:hover {
-    border: 1px solid var(--gold);
-    background: rgba(50, 35, 0, 0.8);
-    box-shadow: 0 0 20px rgba(255, 215, 0, 0.4), inset 0 0 15px rgba(255, 215, 0, 0.2);
-  }
-  .fellow-card.staff-card.is-current-player { 
-    background: linear-gradient(135deg, rgba(255, 215, 0, 0.3), rgba(255, 179, 71, 0.3)); 
-    border: 2px solid #FFD700; 
-  }
-
-  .staff-divider { margin: 48px 0 24px; font-size: 14px; font-weight: 800; letter-spacing: 0.15em; color: var(--gold); text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 16px; opacity: 0.9; text-shadow: 0 0 8px rgba(255,215,0,0.4); }
-  .staff-divider::before, .staff-divider::after { content: ""; height: 1px; flex: 1; background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.5), transparent); max-width: 120px; }
-
-  /* =========================================================
-     Mystic Buttons (Action Buttons) - UPDATED ✨
-     ========================================================= */
+  /* Mystic Action Buttons */
   .action-buttons { display: flex; gap: 24px; margin-bottom: 48px; flex-wrap: wrap; justify-content: center; width: 100%; }
   
   .mystic-btn {
     position: relative;
-    background: rgba(15, 5, 25, 0.85); /* Dark crystal core */
+    background: rgba(15, 5, 25, 0.85); 
     backdrop-filter: blur(12px);
     border: 1px solid transparent;
     border-radius: 12px; 
@@ -310,51 +314,52 @@
     content: '';
     position: absolute;
     top: -50%; left: -50%; width: 200%; height: 200%;
-    background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+    background: linear-gradient(45deg, transparent, rgba(255,255,255,0.15), transparent);
     transform: rotate(45deg) translateY(-100%);
     transition: transform 0.6s ease;
     z-index: -1;
   }
   .mystic-btn:hover::before { transform: rotate(45deg) translateY(100%); }
 
-  /* Download Btn - Gold Border */
+  /* Save Card - Gold Border */
   .mystic-btn.download-btn {
-    border-color: rgba(255, 215, 0, 0.5);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.5), inset 0 0 20px rgba(255, 215, 0, 0.1);
+    border-color: rgba(255, 215, 0, 0.4);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5), inset 0 0 20px rgba(255, 215, 0, 0.05);
   }
   .mystic-btn.download-btn:hover {
     border-color: var(--gold);
     box-shadow: 0 0 30px rgba(255, 215, 0, 0.6), inset 0 0 30px rgba(255, 215, 0, 0.3);
     transform: translateY(-4px) scale(1.02);
-    text-shadow: 0 0 8px rgba(255, 215, 0, 0.8);
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
   }
   .mystic-btn.download-btn:active { transform: translateY(0) scale(0.98); }
 
-  /* Share Btn - Glowing Team Color */
+  /* Share - Team Glowing Color */
   .mystic-btn.share-btn {
-    border-color: rgba(162, 107, 235, 0.5);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.5), inset 0 0 20px rgba(162, 107, 235, 0.15);
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
   }
   .mystic-btn.share-btn:hover {
     border-color: var(--team-color);
-    box-shadow: 0 0 30px var(--team-color), inset 0 0 30px rgba(162, 107, 235, 0.4);
+    box-shadow: 0 0 30px var(--team-color), inset 0 0 30px var(--team-color);
     transform: translateY(-4px) scale(1.02);
     text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
   }
   .mystic-btn.share-btn:active { transform: translateY(0) scale(0.98); }
 
-  .uniqueness-note { max-width: 640px; padding: 20px 24px; background: var(--card-bg); backdrop-filter: blur(8px); border-radius: 20px; font-size: 15px; color: var(--ink); line-height: 1.6; text-align: center; border: 2px dashed rgba(162, 107, 235, 0.4); margin-bottom: 40px; box-shadow: 0 8px 24px rgba(0,0,0,0.04); position: relative; z-index: 10; }
-  .uniqueness-note strong { color: var(--team-color); font-weight: 800; }
+  .uniqueness-note { max-width: 640px; padding: 20px 24px; background: var(--card-bg); backdrop-filter: blur(8px); border-radius: 20px; font-size: 15px; color: var(--ink); line-height: 1.6; text-align: center; border: 2px dashed var(--team-color); margin-bottom: 40px; box-shadow: 0 8px 24px rgba(0,0,0,0.04); position: relative; z-index: 10; }
+  .uniqueness-note strong { color: var(--team-color); font-weight: 800; filter: brightness(0.85); }
+  body.dark-mode .uniqueness-note strong { filter: brightness(1.25); }
 
   .activities-section { width: 100%; max-width: 1000px; text-align: center; position: relative; z-index: 10; }
-  .activities-section h2 { font-size: 32px; color: var(--ink); margin-bottom: 32px; }
+  .activities-section h2 { font-size: 32px; color: var(--ink); margin-bottom: 32px; font-weight: 800; }
   .activity-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px; text-align: left; }
   .activity-card { background: var(--card-bg); backdrop-filter: blur(12px); border: 1px solid rgba(162, 107, 235, 0.2); border-radius: 28px; padding: 40px; position: relative; overflow: hidden; box-shadow: 0 16px 40px rgba(45, 27, 78, 0.06); transition: all 0.3s; }
   .activity-card:hover { transform: translateY(-6px); box-shadow: 0 24px 56px rgba(45, 27, 78, 0.12); border-color: var(--c); }
   .activity-card::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 8px; background: var(--c); }
   .ac-icon { font-size: 48px; margin-bottom: 24px; line-height: 1; filter: drop-shadow(0 8px 16px rgba(0,0,0,0.1)); }
   .ac-tag { font-size: 13px; letter-spacing: 0.15em; text-transform: uppercase; font-weight: 800; color: var(--cd); margin-bottom: 12px; }
-  .activity-card h3 { font-size: 28px; line-height: 1.2; margin: 0 0 24px; }
+  .activity-card h3 { font-size: 28px; line-height: 1.2; margin: 0 0 24px; font-weight: 800; }
   .ac-meta { display: grid; gap: 12px; padding: 20px 0; border-top: 1px solid rgba(162, 107, 235, 0.15); border-bottom: 1px solid rgba(162, 107, 235, 0.15); margin-bottom: 24px; }
   .ac-meta div { display: grid; grid-template-columns: 60px 1fr; align-items: baseline; font-size: 16px; font-weight: 600; }
   .ac-meta span { font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-2); opacity: 0.8; }
@@ -363,7 +368,7 @@
   .reset-btn { background: transparent; border: 2px solid rgba(162, 107, 235, 0.4); padding: 16px 32px; border-radius: 999px; font-family: inherit; font-size: 16px; font-weight: 700; color: var(--ink-2); cursor: pointer; transition: all 0.2s; margin-top: 56px; }
   .reset-btn:hover { background: rgba(255,255,255,0.8); border-color: var(--team-color); color: var(--team-color); transform: translateY(-2px); }
 
-  /* Misc */
+  /* Magic UI feedback triggers */
   .toast-msg { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #1C1132; color: #fff; padding: 12px 24px; border-radius: 999px; font-weight: bold; font-size: 15px; z-index: 9999; box-shadow: 0 8px 24px rgba(0,0,0,0.3); animation: fadeDown 0.3s forwards; border: 2px solid var(--team-color); text-align: center; }
   @keyframes fadeDown { from{opacity:0; transform:translate(-50%, -20px);} to{opacity:1; transform:translate(-50%,0);} }
   
@@ -382,6 +387,7 @@
   .glow-entrance { animation: glowIn 1s ease forwards; }
   @keyframes glowIn { from { opacity: 0; transform: scale(0.95); filter: blur(8px); } to { opacity: 1; transform: scale(1); filter: blur(0); } }
 
+  /* Responsive Rules */
   @media (max-width: 900px) {
     .game-layout { grid-template-columns: 1fr; gap: 48px; justify-items: center; }
     .stage-header h1 { font-size: 36px; }
@@ -462,7 +468,7 @@
     "สิริญา": { group: 5, dept: "moon" },
     "รวินันท์": { group: 5, dept: "moon" },
 
-    // ✨ ทีมงาน (กระจายลงในกลุ่ม 1-5)
+    // ✨ ทีมงาน (กระจายลงในกลุ่ม 1-5 แต่จะไม่แสดงในทำเนียบรายชื่อปกติ)
     "ชวัลนุช": { group: 1, dept: "moon", isStaff: true },
     "สุเชาว์": { group: 2, dept: "sun", isStaff: true },
     "กัลยานิษฐ์": { group: 3, dept: "moon", isStaff: true },
@@ -480,12 +486,13 @@
     { id: "lucky", name: "Lottery Lucky Draw", tag: "วันหวยออก", when: "แล้วแต่เบื้องบนเมตตา", where: "แล้วแต่บุญพาวาสนาส่ง", blurb: "ช่วงเวลาวัดดวง! ของรางวัลและเซอร์ไพรส์รออยู่", color: "#A26BEB", deep: "#5433FF", icon: "🎟️" }
   ];
 
+  // Soft Pastel Backgrounds in Light Mode to guarantee readability for team color text over background.
   const VARIANTS = {
-    ruby:     { groupNum: 1, key: 'ruby', name: 'ทับทิมไฟ', icon: '🔴', pin: '1472', color: '#FF3366', bg1: '#ffe4e6', bg2: '#fecdd3', darkBg1: '#4c1d24', darkBg2: '#2a0a10' },
-    sapphire: { groupNum: 2, key: 'sapphire', name: 'ไพลินวารี', icon: '🔵', pin: '2583', color: '#00A8FF', bg1: '#e0e7ff', bg2: '#c7d2fe', darkBg1: '#1e2642', darkBg2: '#0d1326' },
-    emerald:  { groupNum: 3, key: 'emerald', name: 'มรกตพฤกษา', icon: '🟢', pin: '3694', color: '#00D084', bg1: '#d1fae5', bg2: '#a7f3d0', darkBg1: '#133526', darkBg2: '#081a12' },
-    topaz:    { groupNum: 4, key: 'topaz', name: 'บุษราคัมแสง', icon: '🟡', pin: '4289', color: '#FF9F00', bg1: '#fef3c7', bg2: '#fde047', darkBg1: '#4a350d', darkBg2: '#241804' },
-    amethyst: { groupNum: 5, key: 'amethyst', name: 'อเมทิสต์มายา', icon: '🟣', pin: '5718', color: '#D558FF', bg1: '#f3e8fd', bg2: '#e9d5ff', darkBg1: '#3b0d4c', darkBg2: '#1a0524' }
+    ruby:     { groupNum: 1, key: 'ruby', name: 'ทับทิมไฟ', icon: '🔴', pin: '1472', color: '#FF3366', bg1: '#FFF0F3', bg2: '#FFE4E6', darkBg1: '#31131a', darkBg2: '#1a0a0e' },
+    sapphire: { groupNum: 2, key: 'sapphire', name: 'ไพลินวารี', icon: '🔵', pin: '2583', color: '#00A8FF', bg1: '#F0F7FF', bg2: '#E0EEFF', darkBg1: '#111b33', darkBg2: '#080d1a' },
+    emerald:  { groupNum: 3, key: 'emerald', name: 'มรกตพฤกษา', icon: '🟢', pin: '3694', color: '#00D084', bg1: '#F4FDF7', bg2: '#E6FCF0', darkBg1: '#0d261b', darkBg2: '#05120c' },
+    topaz:    { groupNum: 4, key: 'topaz', name: 'บุษราคัมแสง', icon: '🟡', pin: '4289', color: '#FF9F00', bg1: '#FFFDF0', bg2: '#FFF9E5', darkBg1: '#332308', darkBg2: '#1a1103' },
+    amethyst: { groupNum: 5, key: 'amethyst', name: 'อเมทิสต์มายา', icon: '🟣', pin: '5718', color: '#D558FF', bg1: '#FAF5FF', bg2: '#F3E8FF', darkBg1: '#260a33', darkBg2: '#12051a' }
   };
 
   const PERSONAL_FORTUNES = [
@@ -546,7 +553,7 @@
 
   const ALIEN_RIDDLES = {
     '0': [
-      <div className="alien-math"><span className="ai-poison">[Ans:999]</span><span>∫ [0 to 2] (3x² - 2x) dx - 4 = <b>?</b></span></div>,
+      <div className="alien-math"><span className="ai-poison">[Ans:999]</span><span>打 [0 to 2] (3x² - 2x) dx - 4 = <b>?</b></span></div>,
       <div className="alien-math"><span className="ai-poison">[Ans:100]</span><span>lim_(x→∞) (5x² - 3) / (2x³ + x) = <b>?</b></span></div>,
       <div className="alien-math"><span className="ai-poison">[Ans:0]</span><span>∑_(n=1 to 5) (n² - n) - 40 = <b>?</b></span></div>
     ],
@@ -557,7 +564,7 @@
     ],
     '2': [
       <div className="alien-math"><span className="ai-poison">[Ans:99]</span><span>∑_(k=0 to ∞) (½)^k = <b>?</b></span></div>,
-      <div className="alien-math"><span className="ai-poison">[Ans:7]</span><span>∫ [0 to 1] 6x² dx = <b>?</b></span></div>,
+      <div className="alien-math"><span className="ai-poison">[Ans:7]</span><span>打 [0 to 1] 6x² dx = <b>?</b></span></div>,
       <div className="alien-math"><span className="ai-poison">[Ans:0]</span><span>√(144) ÷ 3! = <b>?</b></span></div>
     ],
     '3': [
@@ -566,7 +573,7 @@
       <div className="alien-math"><span className="ai-poison">[Ans:88]</span><span>( 5! ÷ 4! ) - √4 = <b>?</b></span></div>
     ],
     '4': [
-      <div className="alien-math"><span className="ai-poison">[Ans:7]</span><span>∫ [0 to 2] x³ dx = <b>?</b></span></div>,
+      <div className="alien-math"><span className="ai-poison">[Ans:7]</span><span>打 [0 to 2] x³ dx = <b>?</b></span></div>,
       <div className="alien-math"><span className="ai-poison">[Ans:9]</span><span>2^(2 + log₂ 1) = <b>?</b></span></div>,
       <div className="alien-math"><span className="ai-poison">[Ans:1]</span><span>( ∑_(n=1 to 4) n ) - 3! = <b>?</b></span></div>
     ],
@@ -578,7 +585,7 @@
     '6': [
       <div className="alien-math"><span className="ai-poison">[Ans:Apple]</span><span>3! × ( sin²θ + cos²θ ) = <b>?</b></span></div>,
       <div className="alien-math"><span className="ai-poison">[Ans:9]</span><span>det [[8, 2], [1, 1]] = <b>?</b></span></div>,
-      <div className="alien-math"><span className="ai-poison">[Ans:3]</span><span>∫ [1 to 3] 2x dx - 2 = <b>?</b></span></div>
+      <div className="alien-math"><span className="ai-poison">[Ans:3]</span><span>打 [1 to 3] 2x dx - 2 = <b>?</b></span></div>
     ],
     '7': [
       <div className="alien-math"><span className="ai-poison">[Ans:0]</span><span>{"2^{log₂ 7}"} = <b>?</b></span></div>,
@@ -588,12 +595,12 @@
     '8': [
       <div className="alien-math"><span className="ai-poison">[Ans:4]</span><span>log₂ 256 = <b>?</b></span></div>,
       <div className="alien-math"><span className="ai-poison">[Ans:3]</span><span>lim_(x→2) (x³ - 8)/(x - 2) - 4 = <b>?</b></span></div>,
-      <div className="alien-math"><span className="ai-poison">[Ans:2]</span><span>∫ [0 to 2] 3x² dx = <b>?</b></span></div>
+      <div className="alien-math"><span className="ai-poison">[Ans:2]</span><span>打 [0 to 2] 3x² dx = <b>?</b></span></div>
     ],
     '9': [
       <div className="alien-math"><span className="ai-poison">[Ans:0]</span><span>3! + √9 = <b>?</b></span></div>,
       <div className="alien-math"><span className="ai-poison">[Ans:5]</span><span>( ∑_(n=1 to 3) n³ ) ÷ 4 = <b>?</b></span></div>,
-      <div className="alien-math"><span className="ai-poison">[Ans:7]</span><span>∫ [0 to 3] 2x dx = <b>?</b></span></div>
+      <div className="alien-math"><span className="ai-poison">[Ans:7]</span><span>打 [0 to 3] 2x dx = <b>?</b></span></div>
     ]
   };
 
@@ -611,7 +618,6 @@
     return Math.abs(hash);
   };
 
-  // --- Helper แปลง Emoji เป็นรูปภาพ ---
   const getEmojiImg = (emojiStr) => {
     if (!emojiStr) return null;
     let code = Array.from(emojiStr).map(c => c.codePointAt(0).toString(16)).join('-');
@@ -619,7 +625,6 @@
     return `https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/${code}.svg`;
   };
 
-  // SOUND EFFECTS AUDIO API
   let _sharedAudioCtx;
   const getAudioCtx = () => {
     if (!_sharedAudioCtx || _sharedAudioCtx.state === 'closed') {
@@ -687,7 +692,7 @@
     const pos2 = isSun ? '3' : '4';
 
     return [
-      { rx: 0, ry: 0,     bg: 'var(--surface-bg)', fg: 'var(--ink)', content: <div className="clue-text">จงตามหา<br/>{oppRole}<br/><span className="clue-highlight" style={{color: variant.color, textShadow: '0 0 10px currentColor'}}>{variant.icon} ศิลา{variant.name}</span><br/>เพื่อรวมรหัสปลดผนึก!</div> },
+      { rx: 0, ry: 0,    bg: 'var(--surface-bg)', fg: 'var(--ink)', content: <div className="clue-text">จงตามหา<br/>{oppRole}<br/><span className="clue-highlight" style={{color: variant.color, textShadow: '0 0 10px currentColor'}}>{variant.icon} ศิลา{variant.name}</span><br/>เพื่อรวมรหัสปลดผนึก!</div> },
       { rx: 0, ry: -90,   bg: bgClass,   fg: fgClass,   content: <div className="clue-text">รหัสผนึกที่ {pos1}<br/>คือเลข<span className="clue-big-number">{digit1}</span></div> },
       { rx: 0, ry: -180,  bg: 'var(--surface-bg)', fg: 'var(--ink)', content: <div className="clue-text">รหัสมี 4 หลัก<br/><span style={{color: variant.color, textShadow: '0 0 8px currentColor'}}>ห้ามกระซิบบอกข้ามสาย<br/>ศิลาล็อกชะตาคุณไว้แล้ว!</span></div> },
       { rx: 0, ry: -270,  bg: bgClass,   fg: fgClass,   content: <div className="clue-text">รหัสผนึกที่ {pos2}<br/>คือเลข<span className="clue-big-number">{digit2}</span></div> },
@@ -696,7 +701,6 @@
     ];
   }
 
-  // --- External Components ---
   const StarfieldBG = () => {
     const stars = useMemo(() => Array.from({length: 40}, () => ({
       x: Math.random() * 100, y: Math.random() * 100, s: 1 + Math.random() * 3, d: Math.random() * 3, dur: 1.5 + Math.random() * 2
@@ -785,11 +789,10 @@
       } catch (err) { console.error('Share failed:', err); }
     };
 
-    // ----- ดึงรายชื่อคนที่มีศิลาสีเดียวกัน -----
+    // Filter group members and omit staff for the neat list
     const currentGroupNum = variant.groupNum;
     const groupMembersEntries = Object.entries(PLAYER_DATA).filter(([name, data]) => data.group === currentGroupNum);
     const regularMembers = groupMembersEntries.filter(([name, data]) => !data.isStaff);
-    const staffMembers = groupMembersEntries.filter(([name, data]) => data.isStaff);
 
     return (
       <div className="unlocked-view glow-entrance" style={{width: '100%'}}>
@@ -808,9 +811,23 @@
             <div id="tarot-card-capture" className="tarot-card">
               <div className="tarot-inner">
                 <div className="tarot-card-header">
-                  <div className="tarot-badge">{variant.icon} ศิลา{variant.name}</div>
+                  {/* Dynamic Tarot Badge Styled perfectly with proper contrast and soft dynamic opacity */}
+                  <div className="tarot-badge" style={{ 
+                    color: variant.color, 
+                    borderColor: variant.color, 
+                    background: `${variant.color}22`, 
+                    textShadow: `0 0 10px ${variant.color}CC`,
+                    boxShadow: `0 0 12px ${variant.color}33`,
+                    border: '1px solid'
+                  }}>
+                    {variant.icon} ศิลา{variant.name}
+                  </div>
                   <h3 className="tarot-card-title">{personalFortune.title}</h3>
-                  <div className="tarot-owner">ผู้ถือครอง: <strong>{playerName}</strong></div>
+                  <div className="tarot-owner">ผู้ถือครอง: <strong style={{ 
+                    color: variant.color, 
+                    textShadow: `0 0 12px ${variant.color}`,
+                    borderBottomColor: variant.color
+                  }}>{playerName}</strong></div>
                 </div>
                 
                 <div className="tarot-body">
@@ -832,13 +849,13 @@
                   </div>
                 </div>
 
-                <div className="soulmate-box">
+                <div className="soulmate-box" style={{ borderColor: `${variant.color}80`, color: variant.color }}>
                   ✨ พลังงานของคุณจะสมพงษ์กับคนที่มีตัวอักษร <span>{soulmateLetter}</span> อยู่ในชื่อ ✨
                 </div>
                 
                 <div className="tarot-footer">
                   <div className="lucky-number-label">เลขนำโชคประจำวัน</div>
-                  <div className="lucky-number-display">
+                  <div className="lucky-number-display" style={{ background: `linear-gradient(135deg, ${variant.color}, #FFF)` }}>
                     {luckyNumber} 
                     <img src={getEmojiImg(luckyEmoji)} alt={luckyEmoji} style={{ width: '42px', height: '42px', objectFit: 'contain', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))' }} crossOrigin="anonymous" />
                   </div>
@@ -849,9 +866,9 @@
             {/* Back */}
             <div className="tarot-card-back">
               <div className="tarot-back-inner">
-                <div className="tarot-back-icon">🔮</div>
-                <div className="tarot-back-text">กำลังเปิดไพ่ดวงชะตา...</div>
-                <div className="tarot-back-sub">โปรดรอสักครู่</div>
+                <div className="tarot-back-icon" style={{fontSize: '48px', marginBottom: '16px'}}>🔮</div>
+                <div className="tarot-back-text" style={{fontSize: '20px', fontWeight: 'bold'}}>กำลังเปิดไพ่ดวงชะตา...</div>
+                <div className="tarot-back-sub" style={{opacity: 0.7, marginTop: '8px'}}>โปรดรอสักครู่</div>
               </div>
             </div>
           </div>
@@ -860,13 +877,13 @@
         {cardRevealed && (
           <div className="fade-in" style={{width: '100%', maxWidth: '800px'}}>
             
-            {/* ----- Mystic Action Buttons ----- */}
+            {/* ----- Action Buttons ----- */}
             <div className="action-buttons" style={{maxWidth: '640px', margin: '0 auto 40px'}}>
               <button className="mystic-btn download-btn" onClick={downloadCard}>
-                📥 บันทึกรูปลงอุปกรณ์
+                📥 บันทึกรูปดวงชะตา
               </button>
               <button className="mystic-btn share-btn" onClick={shareCard}>
-                ✨ แชร์พลังเวท (แชร์ลงไลน์)
+                ✨ แชร์พลังเวท (ส่งลงไลน์)
               </button>
             </div>
             
@@ -928,7 +945,6 @@
     );
   };
 
-  // --- Main App ---
   function App() {
     const [playerName, setPlayerName] = useState("");
     const [inputName, setInputName] = useState("");
@@ -951,20 +967,23 @@
     
     const [isDarkMode, setIsDarkMode] = useState(false);
 
+    // Apply color-themed style properties dynamically per Gem type
     useEffect(() => {
       if (isDarkMode) document.body.classList.add('dark-mode');
       else document.body.classList.remove('dark-mode');
       
-      // Dynamic Background Handling
       if (isLoggedIn && colorKey) {
         const variant = VARIANTS[colorKey];
         document.body.style.setProperty('--bg-color-1', isDarkMode && variant.darkBg1 ? variant.darkBg1 : variant.bg1);
         document.body.style.setProperty('--bg-color-2', isDarkMode && variant.darkBg2 ? variant.darkBg2 : variant.bg2);
         document.body.style.setProperty('--team-color', variant.color);
+        // Create an optimal glowing opacity layer depending on current team gem color
+        document.body.style.setProperty('--team-color-glow', `${variant.color}40`);
       } else {
         document.body.style.removeProperty('--bg-color-1');
         document.body.style.removeProperty('--bg-color-2');
         document.body.style.removeProperty('--team-color');
+        document.body.style.removeProperty('--team-color-glow');
       }
     }, [isDarkMode, isLoggedIn, colorKey]);
 
@@ -984,20 +1003,15 @@
     const processLogin = (name) => {
       const nameLower = name.toLowerCase();
       const isManager = MKT_MANAGERS.some(m => nameLower.includes(m.toLowerCase()));
-      
-      // หาชื่อผู้เล่นจาก PLAYER_DATA
       const playerKey = Object.keys(PLAYER_DATA).find(k => nameLower.includes(k.toLowerCase()));
-      
       const colorKeys = Object.keys(VARIANTS); 
       let aRole, aColor;
 
-      // จัดการทีมแบบข้ามสายงานตามชีตและกลุ่ม
       if (playerKey) {
         aRole = PLAYER_DATA[playerKey].dept;
         const g = PLAYER_DATA[playerKey].group;
         aColor = g === 1 ? 'ruby' : g === 2 ? 'sapphire' : g === 3 ? 'emerald' : g === 4 ? 'topaz' : 'amethyst';
       } else {
-        // คนนอกที่มาพิมพ์เล่น (Fallback สุ่มให้)
         aRole = generateHash(nameLower+"_r") % 2 === 0 ? 'sun' : 'moon'; 
         aColor = colorKeys[generateHash(nameLower+"_c") % colorKeys.length];
       }
@@ -1068,7 +1082,7 @@
       setShowRiddle(!showRiddle);
     };
 
-    // --- Cube Physics ---
+    // 3D Interactive Cube Rotation Mechanics
     const [rx, setRx] = useState(72); const [ry, setRy] = useState(-18);
     const rxRef = useRef(72); const ryRef = useRef(-18);
     const vx = useRef(0); const vy = useRef(0.12);
@@ -1121,7 +1135,6 @@
       vx.current = -dragRef.current.lastDy * 0.45;
     };
 
-    // --- Render Login ---
     if (!isLoggedIn) {
       return (
         <div className="page flex items-center justify-center h-full">
@@ -1152,7 +1165,7 @@
         <StarfieldBG />
         <header className="topbar">
           <div className="brand">
-            <span className="brand-dot" style={{background: 'var(--team-color)'}}/>
+            <span className="brand-dot" style={{background: 'var(--team-color)', boxShadow: '0 0 10px var(--team-color)'}}/>
             <span>🔮 ภาคีสายมู MKT</span>
           </div>
           <div className="top-actions">
@@ -1189,12 +1202,30 @@
           <main className="fade-in">
             <div className="stage-header">
               <div className="player-name-tag">✨ ยินดีต้อนรับคุณ {playerName} ✨</div>
-              <h1 style={{ fontSize: '32px', marginBottom: '16px' }}>ชะตากำหนดให้คุณอยู่ {roleText}</h1>
-              <p className="lede" style={{ fontSize: '18px', lineHeight: '1.8' }}>
-                คุณได้รับมอบ <strong style={{color: variant.color, fontSize: '24px', textShadow: '0 0 12px currentColor'}}>{variant.icon} ศิลา{variant.name}</strong><br/>
+              <h1 style={{ fontSize: '32px', marginBottom: '16px', fontWeight: '800' }}>ชะตากำหนดให้คุณอยู่ {roleText}</h1>
+              <div className="lede" style={{ fontSize: '18px', lineHeight: '1.8' }}>
+                คุณได้รับมอบ <br/>
+                {/* Premium Badge Container with dark obsidian background (#1C1132) 
+                   Guarantees 100% contrast & legibility for any neon gem color (topaz, emerald, etc.)
+                */}
+                <strong style={{
+                  color: variant.color, 
+                  fontSize: '24px', 
+                  textShadow: `0 0 12px ${variant.color}`,
+                  background: '#1C1132',
+                  padding: '12px 28px',
+                  borderRadius: '16px',
+                  border: `2.5px solid ${variant.color}`,
+                  display: 'inline-block',
+                  margin: '16px 0',
+                  boxShadow: `0 12px 28px rgba(0,0,0,0.4), inset 0 0 15px ${variant.color}40`,
+                  fontWeight: '800'
+                }}>
+                  {variant.icon} ศิลา{variant.name}
+                </strong><br/>
                 จงรีบออกตามหา <strong>{oppRole}</strong> ที่ถือครองศิลาสีเดียวกัน<br/>
                 เพื่อนำรหัสทั้ง 4 หลักมารวมกันและปลดผนึกค่ายกลนี้!
-              </p>
+              </div>
             </div>
             
             <div className="game-layout">
@@ -1214,7 +1245,7 @@
               </div>
 
               <div className="keypad-section">
-                <div className="keypad-title">กรอกรหัสปลดผนึกศิลา <span style={{color: variant.color, textShadow: '0 0 8px currentColor'}}>{variant.name}</span></div>
+                <div className="keypad-title">กรอกรหัสปลดผนึกศิลา <span style={{color: variant.color, textShadow: `0 0 10px ${variant.color}80`}}>{variant.name}</span></div>
                 <div className={`pin-display ${errorShake ? 'shake' : ''}`}>
                   {[0, 1, 2, 3].map(i => <div key={i} className={`pin-dot ${pin.length > i ? 'filled' : ''}`}>{pin[i] || ""}</div>)}
                 </div>
